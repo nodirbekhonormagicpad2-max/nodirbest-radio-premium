@@ -1,6 +1,13 @@
 <!doctype html>
 <html lang="en">
 <head>
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NodirBest Radio">
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#080c16">
@@ -68,4 +75,5 @@ $('nextCover').addEventListener('error',()=>{if($('nextCover').src!==fallback)$(
 async function update(){try{const r=await fetch('/api/nowplaying',{cache:'no-store'});if(!r.ok)throw Error('Metadata unavailable');const d=await r.json();updateNextSong(d);if(!d.song&&!d.artist)return;const key=d.artist+'|'+d.song;if(key!==trackKey){trackKey=key;$('title').textContent=d.song||'NodirBest Radio';$('artist').textContent=d.artist||'The best music, all the time!';const img=d.image||fallback;$('art').src=img;$('bg').style.backgroundImage='url('+JSON.stringify(img)+')';$('artBrand').style.display=d.image?'none':'block';if('mediaSession'in navigator){navigator.mediaSession.metadata=new MediaMetadata({title:d.song||'NodirBest Radio',artist:d.artist||'Live Radio',album:'NodirBest Radio',artwork:[{src:img}]})}}songStart=Number(d.playedAt)||0;songDuration=Number(d.duration)||0;tick()}catch(e){/* Keep last known song visible */}}
 $('art').addEventListener('error',()=>{if($('art').src!==fallback){$('art').src=fallback;$('artBrand').style.display='block'}});$('refresh').addEventListener('click',update);if('mediaSession'in navigator){navigator.mediaSession.setActionHandler('play',()=>audio.play().catch(()=>{}));navigator.mediaSession.setActionHandler('pause',()=>audio.pause())}update();setInterval(update,30000);setInterval(tick,1000);
 </script>
+<script>if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("/service-worker.js").catch(console.warn));</script>
 </body></html>
